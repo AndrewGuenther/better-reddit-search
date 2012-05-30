@@ -4,12 +4,6 @@ import psycopg2
 import dj_database_url
 from helpers import mysearch, redditsearch
 
-db = dj_database_url.config()
-
-DATABASE = db.get('NAME', 'redditsearch')
-USERNAME = db.get('USER', 'andrew')
-PASSWORD = db.get('PASSWORD', 'password')
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -31,7 +25,8 @@ def search():
 
 
 def connect_db():
-   return psycopg2.connect(database=app.config['DATABASE'], user=app.config['USERNAME'], password=app.config['PASSWORD'])
+   db = dj_database_url.config()
+   return psycopg2.connect(database=db.get('NAME', 'redditsearch'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(sys.argv[1]), host='0.0.0.0')
