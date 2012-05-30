@@ -34,4 +34,4 @@ def connect_db():
    return psycopg2.connect(database=app.config['DATABASE'], user=app.config['USERNAME'], password=app.config['PASSWORD'])
 
 if __name__ == "__main__":
-    app.run(debug=True, port=int(sys.argv[1]))
+    app.run(debug=True, port=int(sys.argv[1]), host='0.0.0.0')
