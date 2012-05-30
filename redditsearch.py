@@ -1,10 +1,13 @@
 from flask import Flask, request, render_template
 import psycopg2
+import dj_database_url
 from helpers import mysearch, redditsearch
 
-DATABASE = 'redditsearch'
-USERNAME = 'andrew'
-PASSWORD = 'password'
+db = dj_database_url.config()
+
+DATABASE = db.get('NAME', 'redditsearch')
+USERNAME = db.get('USER', 'andrew')
+PASSWORD = db.get('PASSWORD', 'password')
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -30,4 +33,4 @@ def connect_db():
    return psycopg2.connect(database=app.config['DATABASE'], user=app.config['USERNAME'], password=app.config['PASSWORD'])
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=59824)
