@@ -1,2 +1,2 @@
-web: python redditsearch.py
+web: python redditsearch.py $PORT
 worker:
