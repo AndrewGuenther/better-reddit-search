@@ -26,8 +26,7 @@ def search():
 
 def connect_db():
    db = dj_database_url.config()
-   dump(db)
-   return psycopg2.connect(database=db.get('NAME', 'redditsearch'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password'))
+   return psycopg2.connect(database=db.get('NAME', 'redditsearch'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password') host=db.get('HOST', 'localhost'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(sys.argv[1]), host='0.0.0.0')
