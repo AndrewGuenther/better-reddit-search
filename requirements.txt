@@ -1,0 +1,4 @@
+Flask==0.8
+nltk==2.0.1rc4
+reddit==1.3.7
+psycopg2==2.4.5

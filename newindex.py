@@ -1,6 +1,7 @@
 import sys
 import nltk
 import reddit
+from time import time
 from doc import DocCollection
 
 r = reddit.Reddit(user_agent='better-reddit-search /u/andrewguenther')
@@ -8,10 +9,13 @@ r = reddit.Reddit(user_agent='better-reddit-search /u/andrewguenther')
 i = 0
 d = DocCollection()
 #old = 't3_' + d.oldest()
-old = 't3_' + sys.argv[1]
+#old = 't3_' + sys.argv[1]
+
+log_time = time() - 129600
+index_time = log_time + 1
 
 submissions = r.get_subreddit('technology').get_new(limit=25, url_data={'sort': 'new'})
-while True:
+while index_time > log_time:
 
    i = 0
    for submission in submissions:
@@ -19,6 +23,7 @@ while True:
       d.add(submission)
       if i == 24:
          old = 't3_'+submission.id
+         index_time = submission.created
       i+=1
 
    print("")
