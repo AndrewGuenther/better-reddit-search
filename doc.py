@@ -16,7 +16,12 @@ class DocCollection:
    def wilson (self, ups, downs):
       n = ups + downs
       z = 1.6 #1.0 = 85%, 1.6 = 95%
-      phat = float(ups) / n
+   
+      if n > 0:
+         phat = float(ups) / n
+      else:
+         return 0
+
       return sqrt(phat+z*z/(2*n)-z*((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n)
      
 
@@ -54,7 +59,9 @@ class DocCollection:
    def add (self, post):
       post_wilson = self.wilson(post.ups, post.downs)
 
-      self.cur.execute("insert into post values (%s, %s, %s, %s);", [post.id, post.title, post.url, post.created])
+      self.cur.execute("delete from word_instance where pid = %s", [post.id])
+      self.cur.execute("delete from post where id = %s;", [post.id])
+      self.cur.execute("insert into post values (%s, %s, %s, %s, %s, %s);", [post.id, post.title, post.url, post.created, post.ups, post.downs])
 
       dist = self.build_dist(post.title, post_wilson)
       self.insert_dist(dist, post.id, TITLE)
@@ -64,12 +71,20 @@ class DocCollection:
          dist = self.build_dist(post.self, post_wilson)
          self.insert_dist(dist, post.id, SELF)
 
-      for idx in range(len(post.comments) - 1):
-         comment_wilson = self.wilson(post.comments[idx].ups, post.comments[idx].downs)
-         dist = self.build_dist(post.comments[idx].body, comment_wilson)
-         self.insert_dist(dist, post.id, COMMENT)
+      try:
+         for idx in range(len(post.comments) - 1):
+            comment_wilson = self.wilson(post.comments[idx].ups, post.comments[idx].downs)
+            dist = self.build_dist(post.comments[idx].body, comment_wilson)
+            self.insert_dist(dist, post.id, COMMENT)
+      except ValueError:
+         return
 
       self.conn.commit()
+
+   def newest (self):
+      self.cur.execute("select id from post where added_on = (select max(added_on) from post);")
+      
+      return self.cur.fetchone()[0]
 
    def oldest (self):
       self.cur.execute("select post_time from post where post_time = (select max(post_time) from post);")

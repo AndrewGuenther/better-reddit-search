@@ -1,6 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import psycopg2
-from nltk import word_tokenize
+from helpers import mysearch, redditsearch
 
 DATABASE = 'redditsearch'
 USERNAME = 'andrew'
@@ -11,22 +11,19 @@ app.config.from_object(__name__)
 
 @app.route("/")
 def hello():
-   return "Hello World!"
+   return render_template('index.html')
 
 @app.route("/s")
 def search():
+   query = request.args['q']
+   
    conn = connect_db()
    cur = conn.cursor()
+   myresult = mysearch(query, cur)
 
-   query = request.args['q']
+   redditresult = redditsearch(query, cur)
 
-   cur.execute('select title from search(%s, %s) where rank > 0', [word_tokenize(query), 15])
-
-   out = ""
-   for result in cur.fetchall():
-      out += '''%s<br>''' % result[0]
-
-   return out
+   return render_template('result.html', result1=redditresult, result2=myresult) 
 
 
 def connect_db():

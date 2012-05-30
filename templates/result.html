@@ -1,0 +1,32 @@
+<html>
+   <head>
+      <title>Better Reddit Search</title>
+      <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='site.css') }} />
+   </head>
+   <body style="margin:0px">
+      <div style="width:50%; float:left;">
+         <ol>
+         {% for elem in result1: %}
+            <li>
+               <div>
+                  <a class='result' href={{elem[2].decode('utf-8')}}>{{elem[1].decode('utf-8')}}</a>
+               </div>
+               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a></div>
+            </li>
+         {% endfor %}
+         </ol>
+      </div>
+      <div style="width:50%; float:right">
+         <ol>
+         {% for elem in result2: %}
+            <li>
+               <div>
+                  <a class='result' href={{elem[2].decode('utf-8')}}>{{elem[1].decode('utf-8')}}</a>
+               </div>
+               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a></div>
+            </li>
+         {% endfor %}
+         </ol>
+      </div>
+   </body>
+</html>
