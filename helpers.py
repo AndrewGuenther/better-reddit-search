@@ -3,6 +3,15 @@ import reddit
 from string import lower
 from math import sqrt
 
+def exists(id, cur):
+   cur.execute('select count(*) from post where id=%s;', [id])
+   res = cur.fetchone()
+
+   if int(res[0]) == 1:
+      return True
+   else:
+      return False
+
 def wilson_sort(elem):
    #assumes [0] = ups & [1] = downs
    ups = elem[3]
@@ -41,7 +50,7 @@ def redditsearch(query, cur):
    oldest = cur.fetchone()[0]
 
    for result in api_results:
-      if result.created > oldest:
+      if result.created > oldest and exists(result.id, cur):
          filtered_results.append((result.id, result.title, result.url, result.ups, result.downs))
 
    filtered_results = sorted(filtered_results, key=wilson_sort, reverse=True)
