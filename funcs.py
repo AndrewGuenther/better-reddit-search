@@ -2,7 +2,8 @@ import psycopg2
 import dj_database_url
 
 db = dj_database_url.config()
-cur = psycopg2.connect(database=db.get('NAME', 'redditsearch'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password'), host=db.get('HOST', 'localhost')).cursor()
+conn = psycopg2.connect(database=db.get('NAME', 'redditsearch'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password'), host=db.get('HOST', 'localhost'))
+cur = conn.cursor()
 
 cur.execute("CREATE OR REPLACE FUNCTION wilson(integer, integer) RETURNS numeric\
     AS 'select (($1 + 1.9208) / ($1 + $2) - 1.96 * SQRT(($1 * $2) / ($1 + $2) + 0.9604) / ($1 + $2)) / (1 + 3.8416 / ($1 + $2))'\
@@ -29,3 +30,5 @@ cur.execute("CREATE OR REPLACE FUNCTION search(text[], integer) RETURNS setof se
    AS 'select id, title, link, wilson(ups, downs) * ((1.5 * sim(id, $1, 0)) + (1.25 * sim(id, $1, 1)) + sim(id, $1, 2)) as rank from post order by rank desc limit $2;'\
    LANGUAGE SQL\
    IMMUTABLE;")\
+
+conn.commit()
