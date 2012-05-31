@@ -1,3 +1,0 @@
-TITLE = 0
-SELF = 1
-COMMENT = 2
