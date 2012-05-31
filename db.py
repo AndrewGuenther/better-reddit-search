@@ -8,7 +8,9 @@ cur.execute("create table post (\
    id char(5),\
    title varchar(300),\
    link text,\
-   post_time timestamp,\
+   post_time numeric(11, 1),\
+   ups integer,\
+   downs integer,\
 \
    primary key(id)\
 );\
