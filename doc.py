@@ -1,4 +1,5 @@
 import nltk
+import dj_database_url
 import reddit
 import psycopg2
 import time
@@ -9,7 +10,8 @@ from consts import TITLE, SELF, COMMENT
 class DocCollection:
 
    def __init__ (self):
-      self.conn = psycopg2.connect("dbname=redditsearch user=andrew password=password")
+      db = dj_database_url.config()
+      self.conn = psycopg2.connect(database=db.get('NAME', 'redditsearch'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password'), host=db.get('HOST', 'localhost'))
       self.conn.autocommit = False
       self.cur = self.conn.cursor()     
 
