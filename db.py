@@ -50,7 +50,7 @@ cur.execute("CREATE OR REPLACE FUNCTION sim(text, text[], integer) RETURNS float
    LANGUAGE SQL\
    IMMUTABLE;\
 ")
-cur.execute("CREATE TYPE search_result (id char(5), title varchar(300), link text, rank float")
+cur.execute("CREATE TYPE search_result as (id char(5), title varchar(300), link text, rank float")
 cur.execute("CREATE OR REPLACE FUNCTION search(text[], integer) RETURNS setof search_result\
    AS 'select id, title, link, wilson(ups, downs) * ((1.5 * sim(id, $1, 0)) + (1.25 * sim(id, $1, 1)) + sim(id, $1, 2)) as rank from post order by rank desc limit $2;'\
    LANGUAGE SQL\
