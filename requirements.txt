@@ -3,3 +3,5 @@ nltk==2.0.1rc4
 reddit==1.3.7
 psycopg2==2.4.5
 dj-database-url==0.2.0
+redis==2.4.13
+rq==0.1.2
