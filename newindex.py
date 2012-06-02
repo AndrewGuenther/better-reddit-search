@@ -4,13 +4,13 @@ import reddit
 from time import time
 from doc import DocCollection
 
-def index():
+def index(days):
    r = reddit.Reddit(user_agent='better-reddit-search /u/andrewguenther')
 
    i = 0
    d = DocCollection()
 
-   log_time = time() - (129600 * int(sys.argv[1]))
+   log_time = time() - (129600 * days)
    index_time = log_time + 1
 
    submissions = r.get_subreddit('technology').get_new(limit=25, url_data={'sort': 'new'})
