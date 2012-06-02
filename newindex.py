@@ -5,7 +5,6 @@ from time import time
 from doc import DocCollection
 from rq import Queue
 from worker import conn
-from newindex import index
 
 def index(after):
    q = Queue(connection=conn)
