@@ -30,12 +30,13 @@ class DocCollection:
    def build_dist (self, body, wilson):
       stemmer = nltk.stem.porter.PorterStemmer()
 
+      stopwords = [x.strip() for x in open("stopwords.txt", "r").readlines()]
+      clean = [w.lower() for w in nltk.word_tokenize(body) if not w.lower() in stopwords]
+      
       stems = []
-
-      for word in nltk.word_tokenize(body):
+      for word in clean:
          if len(word) < 20:
             stems.append(stemmer.stem(lower(word)))
-      stems = [w for w in stems if not w in nltk.corpus.stopwords.words('english')]
 
       freqs = nltk.probability.FreqDist(stems)
 

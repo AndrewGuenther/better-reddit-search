@@ -1,7 +1,8 @@
 <html>
    <head>
       <title>Better Reddit Search</title>
-      <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='site.css') }} />
+      <link rel="stylesheet" type="text/css" href="static/css/site.css" />
+      <link rel="stylesheet" href="static/css/font-awesome.css" />
    </head>
    <body style="margin:0px">
       <div style="width:50%; float:left;">
@@ -11,7 +12,7 @@
                <div>
                   <a class='result' href={{elem[2].decode('utf-8')}}>{{elem[1].decode('utf-8')}}</a>
                </div>
-               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a></div>
+               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a><i style="color:#888" class="icon-thumbs-up up {{elem[0]}}"></i><i style="color:#888" class="icon-thumbs-down down {{elem[0]}}"></i></div>
             </li>
          {% endfor %}
          </ol>
@@ -23,7 +24,7 @@
                <div>
                   <a class='result' href={{elem[2].decode('utf-8')}}>{{elem[1].decode('utf-8')}}</a>
                </div>
-               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a></div>
+               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a><i style="color:#888" class="icon-thumbs-up up {{elem[0]}}"></i><i style="color:#888" class="icon-thumbs-down down {{elem[0]}}"></i></div>
             </li>
          {% endfor %}
          </ol>

@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION tfidf(text, text, integer) RETURNS float
     IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION sim(text, text[], integer) RETURNS float 
-   AS 'select coalesce((((select sum(tfidf(word, $1, $3) * idf(word, $3)) from word_instance where kind = $3 and pid = $1 and word = any ($2))) / |/((select sum(tfidf(word, $1, $3) ^ 2.0) from word_instance where kind = $3 and pid = $1 and word = any ($2)) * (select sum(idf(word, $3) ^ 2.0) from word_instance where kind = $3 and pid = $1 and word = any ($2)))), 0.0);'
+   AS 'select coalesce((((select sum(tfidf(word, $1, $3) * idf(word, $3)) from word_instance where kind = $3 and pid = $1 and word = any ($2))) / |/((select sum(tfidf(word, $1, $3) ^ 2.0) from word_instance where kind = $3 and pid = $1) * (select sum(idf(word, $3) ^ 2.0) from word_instance where kind = $3 and word = any ($2)))), 0.0);'
    LANGUAGE SQL
    IMMUTABLE;
 

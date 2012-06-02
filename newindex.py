@@ -10,7 +10,7 @@ def index():
    i = 0
    d = DocCollection()
 
-   log_time = time() - 129600
+   log_time = time() - (129600 * int(sys.argv[1]))
    index_time = log_time + 1
 
    submissions = r.get_subreddit('technology').get_new(limit=25, url_data={'sort': 'new'})
