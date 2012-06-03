@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION wilson(integer, integer) RETURNS numeric
-    AS 'select (($1 + 1.9208) / ($1 + $2) - 1.96 * SQRT(($1 * $2) / ($1 + $2) + 0.9604) / ($1 + $2)) / (1 + 3.8416 / ($1 + $2))'
+    AS 'select coalesce((($1 + 1.9208) / ($1 + $2) - 1.96 * SQRT(($1 * $2) / ($1 + $2) + 0.9604) / ($1 + $2)) / (1 + 3.8416 / ($1 + $2)), 0.0);'
     LANGUAGE SQL
     IMMUTABLE;
 

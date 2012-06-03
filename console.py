@@ -12,14 +12,17 @@ result = []
 
 while True:
    command = raw_input(user + "/" + database + ": ")
-   if command == "quit":
+   while command[-1] != ";":
+      command += raw_input(user + "/" + database + ": ")
+      
+
+   if command == "quit;":
       break
 
    try:
       cur.execute(command)
       result = cur.fetchall()
-   except psycopg2.ProgrammingError:
+      for row in result:
+         print(row)
+   except psycopg2.ProgrammingError, psycopg2.InternalError:
       print("Malformed query")
-
-   for row in result:
-      print(row)
