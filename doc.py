@@ -58,7 +58,7 @@ class DocCollection:
    def add (self, post):
       post_wilson = self.wilson(post.ups, post.downs)
 
-      self.cur.execute("select count(*) from text_block where thing_id=%s;", [comment.id])
+      self.cur.execute("select count(*) from text_block where thing_id=%s;", [post.id])
       if self.cur.fetchone()[0] == 1:
          self.cur.execute("update text_block set ups=%s, downs=%s, wilson=%s where thing_id=%s;", [post.ups, post.downs, post_wilson, post.id])
       else:
