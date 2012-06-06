@@ -42,7 +42,7 @@ create table search (
    reddit_relevant int,
    mine_relevant int,
    reddit_irrelevant int,
-   mine_irrelevant,
+   mine_irrelevant int,
 
    primary key(id)
 );
