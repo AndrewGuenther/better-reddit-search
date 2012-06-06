@@ -58,10 +58,13 @@ class DocCollection:
    def add (self, post):
       post_wilson = self.wilson(post.ups, post.downs)
 
-      self.cur.execute("update text_block set ups=%s, downs=%s, wilson=%s where thing_id=%s;", [post.ups, post.downs, post_wilson, post.id])
-      self.cur.execute("insert into text_block (thing_id, ups, downs, wilson) select %s, %s, %s, %s where not exists (select 1 from text_block where thing_id=%s);",
-         [post.id, post.ups, post.downs, post_wilson, post.id])
-      self.cur.execute("insert into post select id, %s, %s from text_block where thing_id = %s;", [post.title, post.url, post.id])
+      self.cur.execute("select count(*) from text_block where thing_id=%s;", [comment.id])
+      if self.cur.fetchone()[0] == 1:
+         self.cur.execute("update text_block set ups=%s, downs=%s, wilson=%s where thing_id=%s;", [post.ups, post.downs, post_wilson, post.id])
+      else:
+         self.cur.execute("insert into text_block (thing_id, ups, downs, wilson) select %s, %s, %s, %s where not exists (select 1 from text_block where thing_id=%s);",
+            [post.id, post.ups, post.downs, post_wilson, post.id])
+         self.cur.execute("insert into post select id, %s, %s from text_block where thing_id = %s;", [post.title, post.url, post.id])
 
       dist = self.build_dist(post.title, post_wilson)
       self.insert_dist(dist, post.id)

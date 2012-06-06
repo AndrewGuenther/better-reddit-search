@@ -37,6 +37,7 @@ create table comment (
 
 create table search (
    id serial,
+   query text,
    num_results_reddit int,
    num_results_mine int,
    reddit_relevant int,
