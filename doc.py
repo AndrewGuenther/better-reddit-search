@@ -52,35 +52,38 @@ class DocCollection:
       for word in dist:
          if dist[word] > 0:
 #            print("test")
-            self.cur.execute("insert into word (string, freq, text_of) select %s, %s, id from text_block where thing_id=%s;",
+            self.cur.execute("insert into word (string, freq, text_of) values (%s, %s, %s);",
                [word, dist[word], parent_id])
 
    def add (self, post):
       post_wilson = self.wilson(post.ups, post.downs)
 
-      self.cur.execute("select count(*) from text_block where thing_id=%s;", [post.id])
+      self.cur.execute("select count(*) from post where thing_id=%s;", [post.id])
       if self.cur.fetchone()[0] == 1:
-         self.cur.execute("update text_block set ups=%s, downs=%s, wilson=%s where thing_id=%s;", [post.ups, post.downs, post_wilson, post.id])
+         self.cur.execute("update post set ups=%s, downs=%s, wilson=%s where thing_id=%s;", [post.ups, post.downs, post_wilson, post.id])
       else:
-         self.cur.execute("insert into text_block (thing_id, ups, downs, wilson) select %s, %s, %s, %s where not exists (select 1 from text_block where thing_id=%s);",
-            [post.id, post.ups, post.downs, post_wilson, post.id])
-         self.cur.execute("insert into post select id, %s, %s from text_block where thing_id = %s;", [post.title, post.url, post.id])
+         self.cur.execute("insert into text_block values (%s);", [post.id]);
+         self.cur.execute("insert into post values (%s, %s, %s, %s, %s, %s);", [post.id, post.title, post.url, post.ups, post.downs, post_wilson])
 
-      dist = self.build_dist(post.title, post_wilson)
-      self.insert_dist(dist, post.id)
+         dist = self.build_dist(post.title, post_wilson)
+         self.insert_dist(dist, post.id)
 
+      comment_text = ""
+      comment_wilson = 0
       for idx in range(len(post.comments) - 1):
          comment = post.comments[idx]
          comment_wilson = self.wilson(comment.ups, comment.downs)
 
-         self.cur.execute("select count(*) from text_block where thing_id=%s;", [comment.id])
-         if self.cur.fetchone()[0] == 1:
-            self.cur.execute("update text_block set ups=%s, downs=%s, wilson=%s where thing_id=%s;",
-               [comment.ups, comment.downs, comment_wilson, comment.id])
-         else:
-            self.cur.execute("insert into text_block (thing_id, ups, downs, wilson, parent) select %s, %s, %s, %s, id from text_block where thing_id=%s;",
-               [comment.id, comment.ups, comment.downs, comment_wilson, post.id])
-            dist = self.build_dist(post.comments[idx].body, comment_wilson)
-            self.insert_dist(dist, comment.id)
+         comment_text += " " + comment.body
 
+      self.cur.execute("delete from word where text_of = %s", [post.id + "c"])
+      self.cur.execute("delete from comment where thing_id = %s", [post.id + "c"])
+      self.cur.execute("delete from text_block where thing_id = %s", [post.id + "c"])
+
+      self.cur.execute("insert into text_block values (%s);", [post.id + "c"])
+      self.cur.execute("insert into comment values (%s, %s);", [post.id + "c", post.id])      
+
+      dist = self.build_dist(comment_text, comment_wilson)
+      self.insert_dist(dist, post.id + "c")
+      
       self.conn.commit()

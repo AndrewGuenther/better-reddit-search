@@ -1,49 +1,46 @@
 create table text_block (
-   id serial,
    thing_id varchar(7),
+
+   primary key(thing_id)
+);
+
+create table word (
+   string varchar(20),
+   freq int,
+
+   text_of varchar(7) references text_block(thing_id),
+
+   primary key(string, text_of)
+);
+
+create table post (
+   thing_id varchar(7) references text_block(thing_id),
+   title text,
+   link text,
+
    ups int,
    downs int,
    wilson real,
 
-   parent int references text_block(id),
-
-   primary key(id)
-);
-
-create table word (
-   id serial,
-   string varchar(20),
-   freq int,
-
-   text_of int references text_block(id),
-
-   primary key(id)
-);
-
-create table post (
-   id int references text_block(id),
-   title text,
-   link text,
-
-   primary key(id)
+   primary key(thing_id)
 );
 
 create table comment (
-   id int references text_block(id),
-   parent int references text_block(id),
+   thing_id varchar(7) references text_block(thing_id),
+   parent varchar(7) references text_block(thing_id),
 
-   primary key(id)
+   primary key(thing_id)
 );
 
 create table search (
    id serial,
    query text,
-   num_results_reddit int,
-   num_results_mine int,
-   reddit_relevant int,
-   mine_relevant int,
-   reddit_irrelevant int,
-   mine_irrelevant int,
+   num_results_reddit int default 0,
+   num_results_mine int default 0,
+   reddit_relevant int default 0,
+   mine_relevant int default 0,
+   reddit_irrelevant int default 0,
+   mine_irrelevant int default 0,
 
    primary key(id)
 );

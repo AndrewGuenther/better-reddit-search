@@ -55,4 +55,4 @@ def connect_db():
    return psycopg2.connect(database=db.get('NAME', 'redditsearch2'), user=db.get('USER', 'andrew'), password=db.get('PASSWORD', 'password'), host=db.get('HOST', 'localhost'))
 
 if __name__ == "__main__":
-    app.run(port=int(sys.argv[1]), host='0.0.0.0')
+    app.run(debug=True,port=int(sys.argv[1]), host='0.0.0.0')
