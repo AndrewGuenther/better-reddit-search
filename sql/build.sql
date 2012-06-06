@@ -1,25 +1,48 @@
-create table post (
-   id char(5),
-   title varchar(300),
-   link text,
-   post_time timestamp,
+create table text_block (
+   id serial,
+   thing_id varchar(7),
+   ups int,
+   downs int,
+   wilson real,
+
+   parent int references text_block(id),
 
    primary key(id)
 );
 
 create table word (
-   word varchar(20) primary key,
-   df real
+   id serial,
+   string varchar(20),
+   freq int,
+
+   text_of int references text_block(id),
+
+   primary key(id)
 );
 
+create table post (
+   id int references text_block(id),
+   title text,
+   link text,
 
---kind = {0: "title", 1: "self", 2: "comment"}
-create table word_instance (
-   freq real,
+   primary key(id)
+);
 
-   word varchar(20) references word(word),
-   pid char(5) references post(id),
-   kind int not null,
+create table comment (
+   id int references text_block(id),
+   parent int references text_block(id),
 
-   primary key(word, pid, kind)
+   primary key(id)
+);
+
+create table search (
+   id serial,
+   num_results_reddit int,
+   num_results_mine int,
+   reddit_relevant int,
+   mine_relevant int,
+   reddit_irrelevant int,
+   mine_irrelevant,
+
+   primary key(id)
 );

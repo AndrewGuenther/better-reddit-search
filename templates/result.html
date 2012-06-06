@@ -1,10 +1,17 @@
 <html>
    <head>
       <title>Better Reddit Search</title>
+      <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
       <link rel="stylesheet" type="text/css" href="static/css/site.css" />
       <link rel="stylesheet" href="static/css/font-awesome.css" />
    </head>
    <body style="margin:0px">
+      <div style="text-align:center; margin-top:16px">
+         <form name='search' action='/s' method='get'>
+            <input type="text" name="q" />
+            <input type="submit" value="Search"/>
+         </form>
+      </div>
       <div style="width:50%; float:left;">
          <ol>
          {% for elem in result1: %}
@@ -12,7 +19,11 @@
                <div>
                   <a class='result' href={{elem[2].decode('utf-8')}}>{{elem[1].decode('utf-8')}}</a>
                </div>
-               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a><i style="color:#888" class="icon-thumbs-up up {{elem[0]}}"></i><i style="color:#888" class="icon-thumbs-down down {{elem[0]}}"></i></div>
+               <div>
+                  <i style="color:#888; cursor:pointer" class="icon-thumbs-up up a"></i>
+                  <i style="color:#888; cursor:pointer" class="icon-thumbs-down down a"></i>
+                  <a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a>
+               </div>
             </li>
          {% endfor %}
          </ol>
@@ -24,10 +35,16 @@
                <div>
                   <a class='result' href={{elem[2].decode('utf-8')}}>{{elem[1].decode('utf-8')}}</a>
                </div>
-               <div><a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a><i style="color:#888" class="icon-thumbs-up up {{elem[0]}}"></i><i style="color:#888" class="icon-thumbs-down down {{elem[0]}}"></i></div>
+               <div>
+                  <i style="color:#888; cursor:pointer" class="icon-thumbs-up up b"></i>
+                  <i style="color:#888; cursor:pointer" class="icon-thumbs-down down b"></i>
+                  <a class='comments' href="http://reddit.com/r/technology/comments/{{elem[0]}}">comments</a>
+               </div>
             </li>
          {% endfor %}
          </ol>
       </div>
+      <div class="searchid" searchid={{searchid}} style="visibility:hidden"></div>
    </body>
+   <script src="static/js/feedback.js"></script>
 </html>

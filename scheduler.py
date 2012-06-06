@@ -1,6 +1,6 @@
 from rq import Queue
 from worker import conn
-from newindex import index
+from workerindex import index
 import sys
 import reddit
 

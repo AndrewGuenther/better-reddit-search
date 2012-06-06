@@ -1,24 +1,24 @@
-CREATE OR REPLACE FUNCTION wilson(integer, integer) RETURNS numeric
-    AS 'select (($1 + 1.9208) / ($1 + $2) - 1.96 * SQRT(($1 * $2) / ($1 + $2) + 0.9604) / ($1 + $2)) / (1 + 3.8416 / ($1 + $2))'
+CREATE OR REPLACE FUNCTION idf(integer) RETURNS numeric
+    AS 'select coalesce(log(2.0, ((select count(*) from text_block)::numeric / nullif((select count(*) from word where string = (select string from word where id = $1))::numeric, 0.0))), 0.0);'
     LANGUAGE SQL
     IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION idf(text, integer) RETURNS numeric
-    AS 'select coalesce(log(2.0, ((select count(*) from post) / nullif((select count(*) from word_instance where word=$1 and kind=$2)::numeric, 0.0))), 0.0);'
+CREATE OR REPLACE FUNCTION tfidf(word_id integer, text_of integer) RETURNS numeric 
+    AS 'select ((select freq from word where id=$1)::numeric / (select max(freq) from word where text_of=$2) * idf($1));'
     LANGUAGE SQL
     IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION tfidf(text, text, integer) RETURNS float
-    AS 'select ((select freq from word_instance where word=$1 and pid=$2 and kind=$3) / (select max(freq) from word_instance where pid=$2 and kind=$3) * idf($1, $3));'
-    LANGUAGE SQL
-    IMMUTABLE;
-
-CREATE OR REPLACE FUNCTION sim(text, text[], integer) RETURNS float 
-   AS 'select coalesce((((select sum(tfidf(word, $1, $3) * idf(word, $3)) from word_instance where word = any ($2))) / |/((select sum(tfidf(word, $1, $3) ^ 2.0) from word_instance where pid = $1 and kind = $3) * (select sum(idf(word, $3) ^ 2.0) from word where word = any ($2)))), 0.0);'
+CREATE OR REPLACE FUNCTION sim(doc integer, query text[]) RETURNS float
+   AS 'select coalesce(((select sum(tfidf(id, $1) * idf(id)) from word where text_of = $1 and string = any ($2))::numeric / |/((select sum(tfidf(id, $1) ^ 2.0) from word where text_of = $1) * (select distinct sum(idf(id) ^ 2.0) from word where string = any ($2)))), 0.0);'
    LANGUAGE SQL
    IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION search(text[], integer) RETURNS table(id char(5), title varchar(300), link text, rank float)
-   AS 'select id, title, link, wilson(ups, downs) * ((1.5 * sim(id, $1, 0)) + sim(id, $1, 2)) as rank from post where (ups + downs) > 50 order by rank desc limit $2;'
+CREATE OR REPLACE FUNCTION comment_sim(doc integer, query text[]) RETURNS float
+   AS 'select coalesce(((select sum(tfidf(id, $1) * idf(id)) from word natural join text_block where parent = $1 and string = any ($2))::numeric / |/nullif(((select sum(tfidf(id, $1) ^ 2.0) from word natural join text_block where parent = $1) * (select sum(idf(id) ^ 2.0) from word where string = any ($2))), 0.0)), 0.0);'
+   LANGUAGE SQL
+   IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION search(query text[], most integer) RETURNS table(id char(5), title varchar(300), link text, rank float)
+   AS 'select thing_id, title, link, wilson * (1.5 * sim(id, $1) + comment_sim(id, $1)) as rank from post natural join text_block where id = any (select text_of from word where string = any ($1)) or id = any (select parent from word natural join text_block where string = any($1)) order by rank desc limit $2;'
    LANGUAGE SQL
    IMMUTABLE;

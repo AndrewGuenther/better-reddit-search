@@ -1,3 +1,2 @@
-delete from word_instance;
 delete from word;
-delete from post;
+delete from text_block;
